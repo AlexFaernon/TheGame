@@ -8,89 +8,90 @@ namespace TheGame
 {
     public class GameModel
     {
-        //TODO entropy
+        public int currentEntropy = 0;
         public Level CurrentLevel;
         public UnlimitedRulebook UnlimitedRulebook;
+        public Player Player => CurrentLevel.Player;
+
+        public GameModel(Level level)
+        {
+            CurrentLevel = level;
+        }
 
         public void MovePlayer(MoveDirection direction)
         {
-            CurrentLevel.Player.Move(direction);
+            CurrentLevel.Player.Move(direction, CurrentLevel.Map);
             if (CurrentLevel.ConnectedLevels.TryGetValue(CurrentLevel.Player.Position, out var connectedLevel))
                 CurrentLevel = connectedLevel;
-        }
-
-        public void UseBook(string words)
-        {
-            if (UnlimitedRulebook)
         }
     }
     public class Level
     {
-        public Map Map;
-        public Player Player;
-        public Dictionary<Point, Level> ConnectedLevels;
+        public readonly Map Map;
+        public readonly Player Player = new Player();
+        public readonly Dictionary<Point, Level> ConnectedLevels = new Dictionary<Point, Level>();
+
+        public Level(Map map)
+        {
+            Map = map;
+        }
     }
 
     public class Map
     {
-        private readonly string[] walls;
+        private readonly bool[,] walls;
+
+        public Dictionary<Point, IGameObject> GameObjects;
+        public int Width => walls.GetLength(0);
+        public int Height => walls.GetLength(1);
+
+        public Map(string[] map)
+        {
+            walls = new bool[map.Length,map[0].Length];
+            
+            for (var x = 0; x < map.Length; x++)
+            {
+                for (var y = 0; y < map[0].Length; y++)
+                {
+                    if (map[x][y] != '#')
+                    {
+                        walls[x, y] = true;
+                    }
+                }
+            }
+        }
+
+        public bool IsCorrect(Point point)
+        {
+            if (point.X >= 0 && point.X < Width && point.Y >= 0 && point.Y < Height)
+            {
+                return walls[point.X, point.Y];
+            }
+
+            return false;
+        }
         
     }
     
     public class UnlimitedRulebook
     {
-        public readonly string[] OrdinaryWords;
-        public readonly MagicWord[] MagicWords;
+        public readonly MagicWords[] MagicWords;
 
-        public UnlimitedRulebook(string[] ordinaryWords, MagicWord[] magicWords)
+        public UnlimitedRulebook(MagicWords[] magicWords)
         {
-            if (ordinaryWords.Length != magicWords.Length + 1)
-                throw new ArgumentException();
-            OrdinaryWords = ordinaryWords;
             MagicWords = magicWords;
-        }
-
-        public void UseWords(string words)
-        {
-            if (MagicWords.TryGetValue())
-        }
-        
-        public override string ToString()
-        {
-            var result = new StringBuilder();
-            var isActive = false;
-            for (var i = 0; i < MagicWords.Length + OrdinaryWords.Length; i++)
-            {
-                if (isActive)
-                { 
-                    result.Append(MagicWords[i / 2].Value);
-                }
-                else
-                {
-                    result.Append(OrdinaryWords[i / 2]);
-                }
-                isActive = !isActive;
-            }
-            
-            return result.ToString();
         }
     }
 
-    public class MagicWord
+    public class MagicWords
     {
         private readonly Action magic;
-        private readonly string inactiveWord;
-        private readonly string activeWord;
         private bool isActive;
         private readonly int entropyValue;
 
-        public string Value => isActive ? activeWord : inactiveWord;
-
-        public MagicWord(Action action, string firstState, string secondState, int entropy)
+        public MagicWords(Action action, int entropy)
         {
             magic = action;
-            inactiveWord = firstState;
-            activeWord = secondState;
             entropyValue = entropy;
         }
 
@@ -105,37 +106,51 @@ namespace TheGame
     public class Player
     {
         public Point Position { get; private set; }
-        public void Move(MoveDirection direction)
+
+        public Player()
+        {
+            
+        }
+
+        public Player(Point start)
+        {
+            Position = start;
+        }
+            public void Move(MoveDirection direction, Map map)
         {
             switch (direction)
             {
                 case MoveDirection.Up:
-                    Position += new Size(0,1);
+                    if (map.IsCorrect(Position + new Size(0,-1)))
+                        Position += new Size(0,-1);
                     break;
                 case MoveDirection.Down:
-                    Position += new Size(0,-1);
+                    if (map.IsCorrect(Position + new Size(0,1)))
+                        Position += new Size(0,1);
                     break;
                 case MoveDirection.Right:
-                    Position += new Size(1,0);
+                    if (map.IsCorrect(Position + new Size(1,0)))
+                        Position += new Size(1,0);
                     break;
                 case MoveDirection.Left:
-                    Position += new Size(-1,0);
+                    if (map.IsCorrect(Position + new Size(-1,0)))
+                        Position += new Size(-1,0);
                     break;
             }
         }
     }
 
-    public class Door
+    public class Door : IGameObject
     {
         public bool IsOpen { get; private set; }
-
-        public void ChangeState()
+        
+        public void Switch()
         {
             IsOpen = !IsOpen;
         }
     }
 
-    public class Switcher
+    public class Switcher : IGameObject
     {
         private readonly Door[] connectedDoors;
 
@@ -148,7 +163,7 @@ namespace TheGame
         {
             foreach (var door in connectedDoors)
             {
-                door.ChangeState();
+                door.Switch();
             }
         }
     }

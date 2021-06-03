@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Статик\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj": {}
+    "C:\\Users\\сына\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Статик\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj": {
+    "C:\\Users\\сына\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Статик\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj",
+        "projectUniqueName": "C:\\Users\\сына\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj",
         "projectName": "TheGame",
-        "projectPath": "C:\\Users\\Статик\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj",
-        "packagesPath": "C:\\Users\\Статик\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Статик\\RiderProjects\\TheGame\\TheGame\\obj\\",
+        "projectPath": "C:\\Users\\сына\\RiderProjects\\TheGame\\TheGame\\TheGame.csproj",
+        "packagesPath": "C:\\Users\\сына\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\сына\\RiderProjects\\TheGame\\TheGame\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Статик\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\сына\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -35,6 +37,16 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.9.4, )"
+            },
+            "NUnit": {
+              "target": "Package",
+              "version": "[3.13.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -50,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
         }
       }
     }
